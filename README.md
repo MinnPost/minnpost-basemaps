@@ -1,21 +1,27 @@
-A collection of instructions and relevant files for
-creating the MinnPost base map.
+A collection of instructions and relevant files for editing/creating the MinnPost base map.
 
-## Development
+This repository is basically a TileMill project, so you should put this project in your
+TileMill projects directory, usually ~/Documents/MapBox/project/
+
+## Development and Setup
 
 ### Install PostGIS
 
+TODO.
+
 These instructions assume you are using a locally install PostGIS database with an unsecured postgres user.
 
-### OSM data from Cloudmade
+Create new PostGIS DB called 'minnpost_base_map':
 
-http://downloads.cloudmade.com/americas/northern_america/united_states/minnesota#downloads_breadcrumbs
-http://downloads.cloudmade.com/americas/northern_america/united_states/minnesota/minnesota.osm.bz2
+```createdb -U postgres -h localhost -T template_postgis minnpost_base_map```
 
-### osm2pgsql
+### OpenStreetMap data
 
-Use osm2pgsql to import
-https://wiki.openstreetmap.org/wiki/Osm2pgsql#Mac_OS_X
+Download the [OSM file from Cloudmade](http://downloads.cloudmade.com/americas/northern_america/united_states/minnesota/minnesota.osm.bz2) to your Downloads folder.
+
+### Import OSM data into Postgres (osm2pgsql
+
+Use [osm2pgsql](https://wiki.openstreetmap.org/wiki/Osm2pgsql#Mac_OS_X) to import the data.  Install first:
 
 ```
 brew install automake
@@ -26,3 +32,10 @@ brew install gdal
 brew install --HEAD osm2pgsql
 ```
 
+To import, run the following (this will take a while):
+
+```osm2pgsql -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
+
+### Open in TileMill
+
+You should be able to open this project in TileMill now.
