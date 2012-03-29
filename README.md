@@ -34,7 +34,7 @@ brew install --HEAD osm2pgsql
 
 To import, run the following (this will take a while):
 
-```osm2pgsql -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
+```osm2pgsql -K -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
 
 ### Open in TileMill
 
