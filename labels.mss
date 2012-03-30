@@ -97,7 +97,7 @@
   text-halo-fill:@city_halo;
   text-halo-radius:2;
   [zoom<=8] {
-    text-size: 10 + @text_adjust;
+    text-size: 14 + @text_adjust;
     text-halo-radius:1;
   }
   [zoom=9] {

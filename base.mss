@@ -59,12 +59,12 @@ Map { background-color: @map-base; }
   [type='wood']          { polygon-fill: @wooded; }
 }
 
-#landuse_overlays[type='nature_reserve'][zoom>6] {
+#landuse_overlays[type='nature_reserve'][zoom>=7] {
   line-color: darken(@wooded,25%);
   line-opacity:  0.3;
   line-dasharray: 1,1;
   polygon-fill: darken(@wooded,25%);
-  polygon-opacity: 0.1;
+  polygon-opacity: 0.3;
   [zoom=7] { line-width: 0.4; }
   [zoom=8] { line-width: 0.6; }
   [zoom=9] { line-width: 0.8; }
