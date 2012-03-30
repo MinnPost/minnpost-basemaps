@@ -140,8 +140,8 @@
 
 /* ---- Towns ------------------------------------------------------- */
 
-#place::town[type='town'][zoom>=8][zoom<=17] {
-  text-name:'[name]';
+#place::town[type='town'][zoom>=7][zoom<=17] {
+  text-name:"''";
   text-face-name:@sans;
   text-placement:point;
   text-fill:@town_text;
@@ -149,11 +149,18 @@
   text-halo-fill:@town_halo;
   text-halo-radius:1;
   text-wrap-width: 50;
+  [zoom>=7][name='Ely'],
+  [zoom>=7][name='Brainerd'] {
+    text-name:'[name]';
+  }
   [zoom>=10] {
+    text-name:'[name]';
     text-halo-radius:2;
     text-size: 10;
   }
-  [zoom>=11]{ text-size:11; }
+  [zoom>=11] { 
+    text-size:11 + @text_adjust; 
+  }
   [zoom>=12]{
     text-size:12 + @text_adjust;
     text-line-spacing: 1;
