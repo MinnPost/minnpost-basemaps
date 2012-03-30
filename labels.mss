@@ -140,12 +140,12 @@
 
 /* ---- Towns ------------------------------------------------------- */
 
-#place::town[type='town'][zoom>=9][zoom<=17] {
+#place::town[type='town'][zoom>=8][zoom<=17] {
   text-name:'[name]';
   text-face-name:@sans;
   text-placement:point;
   text-fill:@town_text;
-  text-size:9;
+  text-size:9 + @text_adjust;
   text-halo-fill:@town_halo;
   text-halo-radius:1;
   text-wrap-width: 50;
@@ -155,7 +155,7 @@
   }
   [zoom>=11]{ text-size:11; }
   [zoom>=12]{
-    text-size:12;
+    text-size:12 + @text_adjust;
     text-line-spacing: 1;
   }
   [zoom>=13]{
@@ -164,22 +164,22 @@
     text-line-spacing: 2;
   }
   [zoom>=14]{
-    text-size:13;
+    text-size:13 + @text_adjust;
     text-character-spacing: 2;
     text-line-spacing: 3;
   }
   [zoom>=15]{
-    text-size:14;
+    text-size:14 + @text_adjust;
     text-character-spacing: 3;
     text-line-spacing: 4;
   }
   [zoom>=15]{
-    text-size:15;
+    text-size:15 + @text_adjust;
     text-character-spacing: 4;
     text-line-spacing: 5;
   }
   [zoom>=17]{
-    text-size:16;
+    text-size:16 + @text_adjust;
     text-character-spacing: 5;
     text-line-spacing: 6;
   }
@@ -424,14 +424,14 @@
   }
 }
 
-#area_label[type='water'][zoom>=10] {
+#area_label[type='water'][zoom>=7] {
   text-name: "''";
   text-fill: @water * 0.75;
   text-halo-fill: fadeout(lighten(@water,5%),25%);
   text-halo-radius: 1;
   text-face-name:@sans_italic;
   text-wrap-width:30;
-  [zoom=10][area>102400000],
+  [zoom>=7][area>102400000],
   [zoom=11][area>25600000],
   [zoom=13][area>1600000],
   [zoom=14][area>320000],
