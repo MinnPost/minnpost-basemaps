@@ -37,17 +37,13 @@ Map { background-color: @map-base; }
 }
 
 #landuse_gen0[zoom>3][zoom<=9],
-#landuse_gen1[zoom>9][zoom<=12],
+#landuse_gen1[zoom>=7][zoom<=12],
 #landuse[zoom>12] {
   [type='cemetery']      { polygon-fill: @cemetery; }
   [type='college']       { polygon-fill: @school; }
   [type='commercial']    { polygon-fill: @industrial; }
-  [type='forest']        { polygon-fill: @wooded; }
-  [type='golf_course']   { polygon-fill: @park; }
-  [type='grass']         { polygon-fill: @park; }
   [type='hospital']      { polygon-fill: @hospital; }
   [type='industrial']    { polygon-fill: @industrial; }
-  [type='park']          { polygon-fill: @park; }
   [type='parking']       { polygon-fill: @parking; }
   [type='pedestrian']    { polygon-fill: @pedestrian_fill; }
   [type='pitch']         { polygon-fill: @sports; }
@@ -56,6 +52,10 @@ Map { background-color: @map-base; }
   [type='sports_center'] { polygon-fill: @sports; }
   [type='stadium']       { polygon-fill: @sports; }
   [type='university']    { polygon-fill: @school; }
+  [type='forest']        { polygon-fill: @wooded; }
+  [type='park']          { polygon-fill: @park; }
+  [type='golf_course']   { polygon-fill: @park; }
+  [type='grass']         { polygon-fill: @park; }
   [type='wood']          { polygon-fill: @wooded; }
 }
 
@@ -218,4 +218,4 @@ Map { background-color: @map-base; }
   line-width:3;
   line-color:darken(@park,5);
 
-}
+  }

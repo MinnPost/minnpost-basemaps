@@ -50,8 +50,8 @@
   }
 }
 
-/* No State label
-#place::state[type='state'][zoom>=5][zoom<=10] {
+
+#place::state[type='state'][zoom=6] {
   text-name:'[name]';
   text-face-name:@sans_bold_italic;
   text-placement:point;
@@ -62,6 +62,7 @@
     text-size:10 + @text_adjust;
     text-wrap-width: 40;
   }
+  /*
   [zoom=7] {
     text-size:11 + @text_adjust;
     text-wrap-width: 50;
@@ -84,8 +85,8 @@
     text-size:14 + @text_adjust;
     text-character-spacing: 2;
   }
+  */
 }
-*/
 
 /* ---- Cities ------------------------------------------------------ */
 
