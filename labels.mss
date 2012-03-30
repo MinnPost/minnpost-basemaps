@@ -97,41 +97,41 @@
   text-halo-fill:@city_halo;
   text-halo-radius:2;
   [zoom<=8] {
-    text-size: 10;
+    text-size: 10 + @text_adjust;
     text-halo-radius:1;
   }
   [zoom=9] {
-    text-size:10;
+    text-size:10 + @text_adjust;
     text-wrap-width: 60;
   }
   [zoom=10] {
-    text-size:11;
+    text-size:11 + @text_adjust;
     text-wrap-width: 70;
   }
   [zoom=11] {
-    text-size:12;
+    text-size:12 + @text_adjust;
     text-character-spacing: 1;
     text-wrap-width: 80;
   }
   [zoom=12] {
-    text-size:13;
+    text-size:13 + @text_adjust;
     text-character-spacing: 1;
     text-wrap-width: 100;
   }
   [zoom=13] {
-    text-size:14;
+    text-size:14 + @text_adjust;
     text-character-spacing: 2;
     text-wrap-width: 200;
     text-transform: uppercase;
   }
   [zoom=14] {
-    text-size:15;
+    text-size:15 + @text_adjust;
     text-character-spacing: 4;
     text-wrap-width: 300;
     text-transform: uppercase;
   }
   [zoom=15] {
-    text-size:16;
+    text-size:16 + @text_adjust;
     text-character-spacing: 6;
     text-wrap-width: 400;
     text-transform: uppercase;

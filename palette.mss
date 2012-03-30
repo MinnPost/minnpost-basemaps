@@ -31,28 +31,33 @@ Map { font-directory: url(./fonts); }
 /* Some fonts are larger or smaller than others. Use this variable to
    globally increase or decrease the font sizes. */
 /* Note this is only implemented for certain things so far */
-@text_adjust: 0;
+@text_adjust: 2;
 
 /* ================================================================== */
 /* LANDUSE & LANDCOVER COLORS
 /* ================================================================== */
 
 @map-base:          transparent;
+@non-mn-land:       transparent;
+
 @land:              #FBFBFB;
 @mn-outline:        #444444;
-@non-mn-land:       transparent;
-@water:             #C4DFF6;
-@grass:             #E6F2C1;
-@beach:             #FFEEC7;
-@park:              #DAF2C1;
-@cemetery:          #D6DED2;
-@wooded:            #C3D9AD;
-@agriculture:       #F2E8B6;
 
+@water:             #ADD7F5;
+
+@grass:             #95E425;
+@park:              #ABEA53;
+@wooded:            #A6E949;
+
+@agriculture:       #EFAE80;
+@beach:             #F4EEA9;
+
+@cemetery:          #D6DED2;
 @building:          #E4E0E0;
-@hospital:          rgb(229,198,195);
-@school:            #FFF5CC;
-@sports:            #B8E6B8;
+
+@hospital:          #F5ADB3;
+@school:            #F5CBAD;
+@sports:            #F5EFAD;
 
 @residential:       @land * 0.98;
 @commercial:        @land * 0.97;
@@ -72,19 +77,19 @@ Map { font-directory: url(./fonts); }
  *         inner fill (inline).
  */
 
-@motorway_line:     #E65C5C;
+@motorway_line:     #801019;
 @motorway_fill:     lighten(@motorway_line,10%);
 @motorway_case:     @motorway_line * 0.9;
 
-@trunk_line:        #E68A5C;
+@trunk_line:        #7F3E10;
 @trunk_fill:        lighten(@trunk_line,10%);
 @trunk_case:        @trunk_line * 0.9;
 
-@primary_line:      #FFC859;
+@primary_line:      #E47525;
 @primary_fill:      lighten(@primary_line,10%);
 @primary_case:      @primary_line * 0.9;
 
-@secondary_line:    #FFE873;
+@secondary_line:    #EB975C;
 @secondary_fill:    lighten(@secondary_line,10%);
 @secondary_case:    @secondary_line * 0.9;
 
@@ -110,7 +115,7 @@ Map { font-directory: url(./fonts); }
 /* BOUNDARY COLORS
 /* ================================================================== */
 
-@admin_2:           #324;
+@admin_2:           #10197F;
 
 /* ================================================================== */
 /* LABEL COLORS
@@ -120,10 +125,10 @@ Map { font-directory: url(./fonts); }
    at once or override each individually. */
 @place_halo:        fadeout(#fff,34%);
 
-@country_text:      #435;
+@country_text:      #10197F;
 @country_halo:      @place_halo;
 
-@state_text:        #546;
+@state_text:        #0A3452;
 @state_halo:        @place_halo;
 
 @city_text:         #444;
