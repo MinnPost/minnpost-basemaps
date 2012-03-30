@@ -38,4 +38,5 @@ To import, run the following (this will take a while):
 
 ### Open in TileMill
 
-You should be able to open this project in TileMill now.
+You should be able to open this project in TileMill now.  Do note that it will take a fair amount of time
+to download the external shapefiles, and then render them.  So, maybe work on something else for a bit.
