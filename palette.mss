@@ -37,8 +37,10 @@ Map { font-directory: url(./fonts); }
 /* LANDUSE & LANDCOVER COLORS
 /* ================================================================== */
 
-@land:              #FCFBE7;
-@non-mn-land:       #FFFFFF;
+@map-base:          transparent;
+@land:              #FBFBFB;
+@mn-outline:        #444444;
+@non-mn-land:       transparent;
 @water:             #C4DFF6;
 @grass:             #E6F2C1;
 @beach:             #FFEEC7;

@@ -130,6 +130,17 @@
       "status": "on"
     },
     {
+      "geometry": "polygon",
+      "id": "mn-outline",
+      "class": "",
+      "Datasource": {
+        "file": "https://s3.amazonaws.com/data.minnpost/geospatial-data/st27_d00_shp.zip"
+      },
+      "srs-name": "WGS84",
+      "srs": "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
+      "name": "mn-outline"
+    },
+    {
       "Datasource": {
         "dbname": "minnpost_base_map",
         "geometry_field": "way",
