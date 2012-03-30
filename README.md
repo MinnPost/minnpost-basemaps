@@ -3,6 +3,8 @@ A collection of instructions and relevant files for editing/creating the MinnPos
 This repository is basically a TileMill project, so you should put this project in your
 TileMill projects directory, usually ~/Documents/MapBox/project/
 
+Initial creation of this project spawned from OSM bright.  See [this tutorial](http://mapbox.com/tilemill/docs/guides/osm-bright-mac-quickstart/).
+
 ## Development and Setup
 
 ### Install PostGIS

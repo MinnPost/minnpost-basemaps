@@ -50,6 +50,7 @@
   }
 }
 
+/* No State label
 #place::state[type='state'][zoom>=5][zoom<=10] {
   text-name:'[name]';
   text-face-name:@sans_bold_italic;
@@ -84,10 +85,11 @@
     text-character-spacing: 2;
   }
 }
+*/
 
 /* ---- Cities ------------------------------------------------------ */
 
-#place::city[type='city'][zoom>=8][zoom<=15] {
+#place::city[type='city'][zoom>=7][zoom<=15] {
   text-name:'[name]';
   text-face-name:@sans;
   text-placement:point;
