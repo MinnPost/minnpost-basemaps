@@ -27,8 +27,9 @@ This will take some time, so download the [OSM file from Cloudmade](http://downl
 Use [osm2pgsql](https://wiki.openstreetmap.org/wiki/Osm2pgsql#Mac_OS_X) to import the data.
 
 1.  [Install homebrew](https://github.com/mxcl/homebrew/wiki/installation)
-2.  Install dependencies (this will take some time, especially osm2pgsql; be patient): ```brew install automake; brew install libtool; brew install geos; brew install proj; brew install gdal; brew install --HEAD osm2pgsql;```
-3.  To import, run the following (this will take a while): ```osm2pgsql -K -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
+2.  Install dependencies (this will take some time, especially osm2pgsql; be patient): ```brew install automake; brew install libtool; brew install geos; brew install proj; brew install gdal;```
+3.  Install osm2pgsql: ```brew install --HEAD osm2pgsql;```
+4.  To import, run the following (this will take a while): ```osm2pgsql -K -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
 
 ### Open in TileMill
 
