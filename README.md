@@ -9,35 +9,31 @@ Initial creation of this project spawned from OSM bright.  See [this tutorial](h
 
 The following instructions are known to work on Mac OSX Lion and Snow Leopard.
 
-### Install PostGIS
-
-1) Download and run the [Postgres](http://www.kyngchaos.com/files/software/postgresql/PostgreSQL-9.1.2-1.dmg) and [PostGIS](http://www.kyngchaos.com/files/software/postgresql/PostGIS-1.5.3-2.dmg) images from [Kyng Chaos](http://www.kyngchaos.com/software/postgres).
-2) Run the following to include the Postgres bin to your path: ```echo 'PATH="$PATH:/usr/local/pgsql/bin"' >> ~/.bash_profile; source ~/.bash_profile;```
-3) 
-
-
-Create new PostGIS DB called 'minnpost_base_map':
-
-```createdb -U postgres -h localhost -T template_postgis minnpost_base_map```
-
 ### OpenStreetMap data
 
-Download the [OSM file from Cloudmade](http://downloads.cloudmade.com/americas/northern_america/united_states/minnesota/minnesota.osm.bz2) to your Downloads folder.
+This will take some time, so download the [OSM file from Cloudmade](http://downloads.cloudmade.com/americas/northern_america/united_states/minnesota/minnesota.osm.bz2) to your Downloads folder.
+
+### Install PostGIS
+
+1.  Download and run the [Postgres](http://www.kyngchaos.com/files/software/postgresql/PostgreSQL-9.1.2-1.dmg) and [PostGIS](http://www.kyngchaos.com/files/software/postgresql/PostGIS-1.5.3-2.dmg) images from [Kyng Chaos](http://www.kyngchaos.com/software/postgres).
+2.  Run the following to include the Postgres bin to your path: ```echo 'PATH="$PATH:/usr/local/pgsql/bin"' >> ~/.bash_profile; source ~/.bash_profile;```
+3.  Setup a PostGIS template for making new databases.  Assuming you are in this project's folder, run the following.  ```source ./.postgis-setup.sh; postgis_seteup;```
+4.  Create new PostGIS DB called 'minnpost_base_map':  ```createdb -U postgres -h localhost -T template_postgis minnpost_base_map```
 
 ### Import OSM data into Postgres (osm2pgsql
 
 Use [osm2pgsql](https://wiki.openstreetmap.org/wiki/Osm2pgsql#Mac_OS_X) to import the data.
 
-1) [Install homebrew](https://github.com/mxcl/homebrew/wiki/installation)
-2) Install dependencies: ```
-brew install automake
-brew install libtool
-brew install geos
-brew install proj
-brew install gdal
-brew install --HEAD osm2pgsql
-```
-3) To import, run the following (this will take a while): ```osm2pgsql -K -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
+1.  [Install homebrew](https://github.com/mxcl/homebrew/wiki/installation)
+2.  Install dependencies (this will take some time, especially osm2pgsql; be patient): ```
+    brew install automake
+    brew install libtool
+    brew install geos
+    brew install proj
+    brew install gdal
+    brew install --HEAD osm2pgsql
+    ```
+3.  To import, run the following (this will take a while): ```osm2pgsql -K -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
 
 ### Open in TileMill
 
