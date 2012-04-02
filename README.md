@@ -1,13 +1,15 @@
 A collection of instructions and relevant files for editing/creating the MinnPost base map.
 
-This repository is basically a TileMill project, so you should put this project in your
-TileMill projects directory, usually ~/Documents/MapBox/project/
-
-Initial creation of this project spawned from OSM bright.  See [this tutorial](http://mapbox.com/tilemill/docs/guides/osm-bright-mac-quickstart/).
+Initial creation of this project spawned from [OSM bright](https://github.com/mapbox/osm-bright).  For additional help, see [this tutorial](http://mapbox.com/tilemill/docs/guides/osm-bright-mac-quickstart/).
 
 ## Development and Setup
 
 The following instructions are known to work on Mac OSX Lion and Snow Leopard.
+
+### Get Project
+
+This repository is basically a TileMill project, so you should clone this project in your
+TileMill (Mapbox) projects directory, usually ```~/Documents/MapBox/project/```.
 
 ### OpenStreetMap data
 
@@ -25,14 +27,7 @@ This will take some time, so download the [OSM file from Cloudmade](http://downl
 Use [osm2pgsql](https://wiki.openstreetmap.org/wiki/Osm2pgsql#Mac_OS_X) to import the data.
 
 1.  [Install homebrew](https://github.com/mxcl/homebrew/wiki/installation)
-2.  Install dependencies (this will take some time, especially osm2pgsql; be patient): ```
-    brew install automake
-    brew install libtool
-    brew install geos
-    brew install proj
-    brew install gdal
-    brew install --HEAD osm2pgsql
-    ```
+2.  Install dependencies (this will take some time, especially osm2pgsql; be patient): ```brew install automake; brew install libtool; brew install geos; brew install proj; brew install gdal; brew install --HEAD osm2pgsql;```
 3.  To import, run the following (this will take a while): ```osm2pgsql -K -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
 
 ### Open in TileMill
