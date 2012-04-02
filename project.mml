@@ -603,7 +603,7 @@
       "status": "on"
     }
   ],
-  "attribution": "Data © OpenStreetMap (and) contributors, CC-BY-SA",
+  "attribution": "Map data © OpenStreetMap contributors, CC-BY-SA, designed by MinnPost",
   "description": "A base map for use with MinnPost's mapping projects.",
   "name": "MinnPost Base Map",
   "version": "0.0.1"
