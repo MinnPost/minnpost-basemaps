@@ -7,11 +7,14 @@ Initial creation of this project spawned from OSM bright.  See [this tutorial](h
 
 ## Development and Setup
 
+The following instructions are known to work on Mac OSX Lion and Snow Leopard.
+
 ### Install PostGIS
 
-TODO.
+1) Download and run the [Postgres](http://www.kyngchaos.com/files/software/postgresql/PostgreSQL-9.1.2-1.dmg) and [PostGIS](http://www.kyngchaos.com/files/software/postgresql/PostGIS-1.5.3-2.dmg) images from [Kyng Chaos](http://www.kyngchaos.com/software/postgres).
+2) Run the following to include the Postgres bin to your path: ```echo 'PATH="$PATH:/usr/local/pgsql/bin"' >> ~/.bash_profile; source ~/.bash_profile;```
+3) 
 
-These instructions assume you are using a locally install PostGIS database with an unsecured postgres user.
 
 Create new PostGIS DB called 'minnpost_base_map':
 
@@ -23,9 +26,10 @@ Download the [OSM file from Cloudmade](http://downloads.cloudmade.com/americas/n
 
 ### Import OSM data into Postgres (osm2pgsql
 
-Use [osm2pgsql](https://wiki.openstreetmap.org/wiki/Osm2pgsql#Mac_OS_X) to import the data.  Install first:
+Use [osm2pgsql](https://wiki.openstreetmap.org/wiki/Osm2pgsql#Mac_OS_X) to import the data.
 
-```
+1) [Install homebrew](https://github.com/mxcl/homebrew/wiki/installation)
+2) Install dependencies: ```
 brew install automake
 brew install libtool
 brew install geos
@@ -33,10 +37,7 @@ brew install proj
 brew install gdal
 brew install --HEAD osm2pgsql
 ```
-
-To import, run the following (this will take a while):
-
-```osm2pgsql -K -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
+3) To import, run the following (this will take a while): ```osm2pgsql -K -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
 
 ### Open in TileMill
 
@@ -46,4 +47,4 @@ to download the external shapefiles, and then render them.  So, maybe work on so
 ## Data Used
 
  - OpenStreetMap
- - Census (http://www.census.gov/geo/www/cob/st2000.html)
+ - [Census](http://www.census.gov/geo/www/cob/st2000.html) for Minnesota outline.
