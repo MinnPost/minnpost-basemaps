@@ -6,16 +6,16 @@
 and trunks. */
 
 #roads_low[zoom>=5][zoom<=8] {
-  [type='motorway'] { line-color: @motorway_line; }
-  [type='trunk'] { line-color: @trunk_line; }
+  [type='motorway'] { line-color: fadeout(@motorway_line, 10%); }
+  [type='trunk'] { line-color: fadeout(@trunk_line, 10%); }
   [zoom=5] {
-    [type='motorway'] { line-width: 0.4; }
+    [type='motorway'] { line-width: 0.3; }
     [type='trunk'] { line-width: 0.2; } }
   [zoom=6] {
-    [type='motorway'] { line-width: 0.5; }
+    [type='motorway'] { line-width: 0.3; }
     [type='trunk'] { line-width: 0.25; } }
   [zoom=7] {
-    [type='motorway'] { line-width: 0.6; }
+    [type='motorway'] { line-width: 0.4; }
     [type='trunk'] { line-width: 0.3; } }
   [zoom=8] {
     [type='motorway'] { line-width: 1; }
