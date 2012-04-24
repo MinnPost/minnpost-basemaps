@@ -1,15 +1,17 @@
-A collection of instructions and relevant files for editing/creating the MinnPost base map.
+A collection of instructions and relevant files for editing/creating the MinnPost base
+maps which are designed for use in Tilemill.
 
-Initial creation of this project spawned from [OSM bright](https://github.com/mapbox/osm-bright).  For additional help, see [this tutorial](http://mapbox.com/tilemill/docs/guides/osm-bright-mac-quickstart/).
+## Dealing with Maps
 
-## Development and Setup
+Map names are assumed to be the name of the relevant directory.
+
+ - Link map into MapBox projects: ```fab map:"<MAP-NAME>" link;```
+ - Unlink map into MapBox projects: ```fab map:"<MAP-NAME>" unlink;```
+ - Clone (and link) map: ```fab map:"<MAP-NAME>" clone:"<NEW-MAP-NAME>";```
+
+## Setup
 
 The following instructions are known to work on Mac OSX Lion and Snow Leopard.
-
-### Get Project
-
-This repository is basically a TileMill project, so you should clone this project in your
-TileMill (Mapbox) projects directory, usually ```~/Documents/MapBox/project/```.
 
 ### OpenStreetMap data
 
@@ -33,10 +35,14 @@ Use [osm2pgsql](https://wiki.openstreetmap.org/wiki/Osm2pgsql#Mac_OS_X) to impor
 
 ### Open in TileMill
 
-You should be able to open this project in TileMill now.  Do note that it will take a fair amount of time
+You should be able to open basemaps that use this date.  Do note that it will take a fair amount of time
 to download the external shapefiles, and then render them.  So, maybe work on something else for a bit.
 
 ## Data Used
 
  - OpenStreetMap
  - [Census](http://www.census.gov/geo/www/cob/st2000.html) for Minnesota outline.
+ 
+## Technologies Used
+
+ - Initial creation of this project spawned from [OSM bright](https://github.com/mapbox/osm-bright).  For additional help, see [this tutorial](http://mapbox.com/tilemill/docs/guides/osm-bright-mac-quickstart/).
