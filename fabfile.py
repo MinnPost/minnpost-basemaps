@@ -78,15 +78,31 @@ def deploy(concurrency=32):
   _deploy_to_s3(concurrency)
   
 
+def link_caches():
+  """
+  Link local map cache to Mapbox cache to speed up mapnik conversion.
+  """
+  require('map', provided_by=[map])
+  
+  env.base_path = os.getcwd()
+  exists = os.path.exists('%(base_path)s/%(map)s/cache' % env)
+  if exists:
+    print "There already a linked cache directory."
+  else:
+    env.tilemill_cache = os.path.expanduser('%(tilemill_projects)s/../cache/' % env)
+    local(('ln -s %(tilemill_cache)s %(base_path)s/%(map)s/cache') % env)
+  
+
 def carto_to_mapnik():
   """
   Convert carto styles to mapnik configuration.
   """
   require('map', provided_by=[map])
+  link_caches()
   local('%(tilemill_path)s/node_modules/carto/bin/carto %(map)s/project.mml > %(map)s/%(map)s.xml' % env)
   
 
-def generate_mbtile():
+def generate_mbtile(minzoom=None, maxzoom=None):
   """
   Generate MBtile.
   """
@@ -97,8 +113,8 @@ def generate_mbtile():
     config = json.load(f)
   
     # Define config values
-    env.minzoom = config['minzoom']
-    env.maxzoom = config['maxzoom']
+    env.minzoom = config['minzoom'] if minzoom == None else minzoom
+    env.maxzoom = config['maxzoom'] if maxzoom == None else maxzoom
     env.bbox = '%f,%f,%f,%f' % (config['bounds'][0], config['bounds'][1], config['bounds'][2], config['bounds'][3])
     
     # Export
