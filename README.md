@@ -8,10 +8,22 @@ Map names are assumed to be the name of the relevant directory.
  - Link map into MapBox projects: ```fab map:"<MAP-NAME>" link;```
  - Unlink map into MapBox projects: ```fab map:"<MAP-NAME>" unlink;```
  - Clone (and link) map: ```fab map:"<MAP-NAME>" clone:"<NEW-MAP-NAME>";```
+ 
+## Deployment
+
+
 
 ## Setup
 
 The following instructions are known to work on Mac OSX Lion and Snow Leopard.
+
+### Dependencies
+
+Install dependencies.
+
+```
+sudo pip install -r requirements.txt
+```
 
 ### OpenStreetMap data
 

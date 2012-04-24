@@ -35,7 +35,8 @@ def production():
   Work on production environment
   """
   env.settings = 'production'
-  env.s3_bucket = env.project_name
+  env.s3_buckets = ['a.tiles.minnpost', 'b.tiles.minnpost', 'c.tiles.minnpost', 'd.tiles.minnpost']
+  env.acl = 'acl-public'
 
 
 def staging():
@@ -43,7 +44,8 @@ def staging():
   Work on staging environment
   """
   env.settings = 'staging'
-  env.s3_bucket = 'staging-%(project_name)s' % env
+  env.s3_buckets = ['testing.tiles.minnpost']
+  env.acl = 'acl-public'
   
 
 def map(name):
@@ -51,6 +53,53 @@ def map(name):
   Select map to work on.
   """
   env.map = name
+  
+
+def _deploy_to_s3(concurrency):
+  """
+  Deploy tiles to S3.
+  """
+  env.concurrency = concurrency
+
+  # Deploy to many buckets (multi-dns-head mode)
+  for bucket in env.s3_buckets:
+    env.s3_bucket = bucket    
+    local('ivs3 %(map)s/tiles %(s3_bucket)s/%(project_name)s/%(map)s --%(acl)s -c %(concurrency)s' % env)
+
+
+def deploy(concurrency=32):
+  """
+  Deploy a map. Optionally takes a concurrency parameter indicating how many files to upload simultaneously.
+  """
+  require('settings', provided_by=[production, staging])
+  require('map', provided_by=[map])
+  
+  _deploy_to_s3(concurrency)
+  
+
+def carto_to_mapnik():
+  """
+  Convert carto styles to mapnik configuration.
+  """
+  require('map', provided_by=[map])
+  local('%(tilemill_path)s/node_modules/carto/bin/carto %(map)s/project.mml > %(map)s/%(map)s.xml' % env)
+  
+
+def generate_mbtile():
+  """
+  Generate MBtile.
+  """
+  require('map', provided_by=[map])
+  local('%(tilemill_path)s/node %(tilemill_path)s/index.js export --format=mbtiles --config=%(map)s/project.mml %(map)s %(map)s/exports/%(map)s.mbtiles' % env)
+  
+
+def cleanup_exports():
+  """
+  Cleanup export directories
+  """
+  require('map', provided_by=[map])
+  local('rm -rf %(map)s/tiles/*' % env)
+  local('rm -rf %(map)s/exports/*' % env)
 
 
 def link():

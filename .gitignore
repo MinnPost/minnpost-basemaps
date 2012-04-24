@@ -1,3 +1,7 @@
 # Overall, we don't want to commit the data layers
 # unless the file size is small.
 */layers/*
+
+# No rendered tiles or exports
+*/tiles/*
+*/exports/*
