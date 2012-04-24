@@ -21,7 +21,7 @@ This will take some time, so download the [OSM file from Cloudmade](http://downl
 
 1.  Download and run the [Postgres](http://www.kyngchaos.com/files/software/postgresql/PostgreSQL-9.1.2-1.dmg) and [PostGIS](http://www.kyngchaos.com/files/software/postgresql/PostGIS-1.5.3-2.dmg) images from [Kyng Chaos](http://www.kyngchaos.com/software/postgres).
 2.  Run the following to include the Postgres bin to your path: ```echo 'PATH="$PATH:/usr/local/pgsql/bin"' >> ~/.bash_profile; source ~/.bash_profile;```
-3.  Setup a PostGIS template for making new databases.  Assuming you are in this project's folder, run the following.  ```source ./.postgis-setup.sh; postgis_seteup;```
+3.  Setup a PostGIS template for making new databases.  Assuming you are in this project's folder, run the following.  ```source ./.postgis-setup.sh; postgis_setup;```
 4.  Create new PostGIS DB called 'minnpost_base_map':  ```createdb -U postgres -h localhost -T template_postgis minnpost_base_map```
 
 ### Import OSM data into Postgres (osm2pgsql
