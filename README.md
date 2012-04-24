@@ -22,8 +22,11 @@ The following instructions are known to work on Mac OSX Lion and Snow Leopard.
 Install dependencies.
 
 ```
-sudo pip install -r requirements.txt
+sudo pip install -r requirements.txt;
+brew install mapnik;
 ```
+
+Note the path prefix suggestion at the end of the mapnik install.
 
 ### OpenStreetMap data
 

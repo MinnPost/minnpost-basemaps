@@ -119,6 +119,34 @@ def generate_mbtile(minzoom=None, maxzoom=None):
     
     # Export
     local('%(tilemill_path)s/node %(tilemill_path)s/index.js export --format=mbtiles --minzoom=%(minzoom)s --maxzoom=%(maxzoom)s --bbox=%(bbox)s %(map)s %(map)s/exports/%(map)s.mbtiles' % env)
+
+
+def render_tiles_mapnik(process_count, minzoom=None, maxzoom=None):
+  """
+  Render tile from mapnik configuration
+  """
+  env.process_count = process_count
+
+  # Read data from project mml
+  with open('%(map)s/project.mml' % env, 'r') as f:
+    config = json.load(f)
+  
+    # Define config values
+    env.minzoom = config['minzoom'] if minzoom == None else minzoom
+    env.maxzoom = config['maxzoom'] if maxzoom == None else maxzoom
+    env.minlon = config['bounds'][0]
+    env.minlat = config['bounds'][1]
+    env.maxlon = config['bounds'][2]
+    env.maxlat = config['bounds'][3]
+
+    # Cleanup tiles
+    local('rm -rf %(map)s/tiles/*' % env)
+    
+    # Render tiles
+    command = 'ivtile %(map)s/%(map)s.xml %(map)s/tiles %(maxlat)s %(minlon)s %(minlat)s %(maxlon)s %(minzoom)s %(maxzoom)s -p %(process_count)s'
+    if 'buffer' in env:
+      command += ' -b %(buffer)s'
+    local(command % env)
   
 
 def create_exports():
