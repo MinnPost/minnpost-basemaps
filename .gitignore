@@ -5,3 +5,4 @@
 # No rendered tiles or exports
 */tiles/*
 */exports/*
+*/cache/*

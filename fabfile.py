@@ -5,6 +5,7 @@ Fab file to help with managing project.  For docs on Fab file, please see: http:
 import sys
 import os
 import warnings
+import json
 from fabric.api import *
 
 """
@@ -90,7 +91,27 @@ def generate_mbtile():
   Generate MBtile.
   """
   require('map', provided_by=[map])
-  local('%(tilemill_path)s/node %(tilemill_path)s/index.js export --format=mbtiles --config=%(map)s/project.mml %(map)s %(map)s/exports/%(map)s.mbtiles' % env)
+  
+  # Read data from project mml
+  with open('%(map)s/project.mml' % env, 'r') as f:
+    config = json.load(f)
+  
+    # Define config values
+    env.minzoom = config['minzoom']
+    env.maxzoom = config['maxzoom']
+    env.bbox = '%f,%f,%f,%f' % (config['bounds'][0], config['bounds'][1], config['bounds'][2], config['bounds'][3])
+    
+    # Export
+    local('%(tilemill_path)s/node %(tilemill_path)s/index.js export --format=mbtiles --minzoom=%(minzoom)s --maxzoom=%(maxzoom)s --bbox=%(bbox)s %(map)s %(map)s/exports/%(map)s.mbtiles' % env)
+  
+
+def create_exports():
+  """
+  Create export directories
+  """
+  require('map', provided_by=[map])
+  local('mkdir -p %(map)s/tiles' % env)
+  local('mkdir -p %(map)s/exports' % env)
   
 
 def cleanup_exports():
