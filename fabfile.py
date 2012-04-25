@@ -151,7 +151,7 @@ def generate_tiles_from_mbtile():
       local('rm -rf %(map)s/tiles-tmp' % env)
       local('rm -rf %(map)s/tiles' % env)
       local('mb-util --scheme=tms %(map)s/exports/%(map)s.mbtiles %(map)s/tiles-tmp' % env)
-      local('mv "%(map)s/tiles-tmp/0.0.1/%(map_title)s" %(map)s/tiles' % env)
+      local('mv "%(map)s/tiles-tmp/%(map_version)s/%(map_title)s" %(map)s/tiles' % env)
       local('mv %(map)s/tiles-tmp/metadata.json %(map)s/tiles/metadata.json' % env)
       local('rm -rf %(map)s/tiles-tmp' % env)
   else:
@@ -269,7 +269,12 @@ def read_project():
   with open('%(map)s/project.mml' % env, 'r') as f:
     mml = json.load(f)
     env.map_title = mml['name']
-  
+    
+    # Version is not always defined
+    try:
+      env.map_version = mml['version']
+    except KeyError:
+      env.map_version = '1.0.0'
 
 def create_exports():
   """
