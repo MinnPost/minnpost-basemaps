@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Show maps</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://leaflet.cloudmade.com//dist/leaflet.css" />
+	<!--[if lte IE 8]><link rel="stylesheet" href="http://leaflet.cloudmade.com//dist/leaflet.ie.css" /><![endif]-->
+
+	<script src="http://leaflet.cloudmade.com//dist/leaflet.js"></script>
+	<script src="http://code.jquery.com/jquery.min.js"></script>
+</head>
+<body>
+  <style type="text/css">
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+    }
+    
+    .map-form {
+      position: absolute;
+      z-index: 999999;
+      top: 10px;
+      right: 10px;
+      width: 300px;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .update-map {
+      width: 90%;
+      font-size: 1.5em;
+      padding: .25em;
+      border: 1px solid #999999;
+      margin: 0;
+    }
+  </style>
+
+  <div class="map-form">
+    <form>
+      <input type="text" class="update-map">
+    </form>
+  </div>
+  
+	<div id="map"></div>
+
+	<script type="text/javascript">
+		var map = new L.Map('map');
+		var layer;
+		
+		$(document).ready(function() {
+		  // Set default and load default layer
+		  $('input.update-map').val('minnpost-basemaps/minnpost-minnesota-night');
+	    var base = $('input.update-map').val();
+	    var url = 'https://s3.amazonaws.com/{s}.tiles.minnpost/' + base + '/{z}/{x}/{y}.png';
+	    
+  		layer = new L.TileLayer(url, { maxZoom: 15, minZoom: 2, scheme: 'tms' });
+  		map.setView(new L.LatLng(46.1494,-94.4495), 7).addLayer(layer);
+		
+		  // Allow for input of other maps
+		  $('.map-form form').on('submit', function(e) {
+		    e.preventDefault();
+		    if (layer) {
+		      map.removeLayer(layer);
+		    }
+		    var base = $('input.update-map').val();
+		    var url = 'https://s3.amazonaws.com/{s}.tiles.minnpost/' + base + '/{z}/{x}/{y}.png';
+		    
+    		layer = new L.TileLayer(url, { maxZoom: 15, minZoom: 2, scheme: 'tms' });
+    		map.setView(new L.LatLng(46.1494,-94.4495), 7).addLayer(layer);
+		    
+		  });
+		});
+	</script>
+</body>
+</html>
