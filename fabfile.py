@@ -17,6 +17,7 @@ env.pg_host = 'localhost'
 env.pg_dbname = 'minnpost_fec'
 env.pg_user = 'postgres'
 env.pg_pass = ''
+env.labels = None
 
 # Tilemill paths.  For Ubuntu
 if os.path.exists('/usr/share/tilemill'):
@@ -64,11 +65,19 @@ def deploy_to_s3(concurrency):
   require('settings', provided_by=[production, staging])
   require('map', provided_by=[map])
   env.concurrency = concurrency
+  
+  # Determine if we need to add a label suffix
+  if env.labels == None:
+    env.map_suffix = ''
+  if env.labels == True:
+    env.map_suffix = '-labels'
+  if env.labels == False:
+    env.map_suffix = '-no-labels'
 
   # Deploy to many buckets (multi-dns-head mode)
   for bucket in env.s3_buckets:
     env.s3_bucket = bucket    
-    local('ivs3 %(map)s/tiles %(s3_bucket)s/%(project_name)s/%(map)s --%(acl)s -c %(concurrency)s' % env)
+    local('ivs3 %(map)s/tiles %(s3_bucket)s/%(project_name)s/%(map)s%(map_suffix)s --%(acl)s -c %(concurrency)s' % env)
 
 
 def export_deploy(concurrency=32, minzoom=None, maxzoom=None):
@@ -79,7 +88,6 @@ def export_deploy(concurrency=32, minzoom=None, maxzoom=None):
   require('map', provided_by=[map])
   
   cleanup_exports()
-  no_labels()
   generate_mbtile(minzoom, maxzoom)
   reset_labels()
   generate_tiles_from_mbtile()
@@ -134,6 +142,7 @@ def generate_tiles_from_mbtile():
   Generate MBtile.
   """
   require('map', provided_by=[map])
+  read_project()
     
   exists = os.path.exists('%(map)s/exports/%(map)s.mbtiles' % env)
   if exists:
@@ -141,7 +150,7 @@ def generate_tiles_from_mbtile():
       local('rm -rf %(map)s/tiles-tmp' % env)
       local('rm -rf %(map)s/tiles' % env)
       local('mb-util --scheme=tms %(map)s/exports/%(map)s.mbtiles %(map)s/tiles-tmp' % env)
-      local('mv %(map)s/tiles-tmp/0.0.1 %(map)s/tiles' % env)
+      local('mv "%(map)s/tiles-tmp/0.0.1/%(map_title)s" %(map)s/tiles' % env)
       local('mv %(map)s/tiles-tmp/metadata.json %(map)s/tiles/metadata.json' % env)
       local('rm -rf %(map)s/tiles-tmp' % env)
   else:
@@ -181,6 +190,7 @@ def no_labels():
   Updates tilemill project to no use labels
   """
   require('map', provided_by=[map])
+  env.labels = False
   
   # Create a backup
   exists = os.path.exists('%(map)s/project.mml.orig' % env)
@@ -209,6 +219,7 @@ def only_labels():
   Updates tilemill project to use only labels
   """
   require('map', provided_by=[map])
+  env.labels = True
   
   # Create a backup
   exists = os.path.exists('%(map)s/project.mml.orig' % env)
@@ -237,14 +248,27 @@ def reset_labels():
   """
   require('map', provided_by=[map])
   
-  # Create a backup
-  
+  # Check for orig
+  env.labels = None
   exists = os.path.exists('%(map)s/project.mml.orig' % env)
   if exists:
     local('rm -f %(map)s/project.mml' % env);
     local('mv %(map)s/project.mml.orig %(map)s/project.mml' % env);
   else:
     print 'No label processing to reset.'
+  
+
+def read_project():
+  """
+  Get data from the TileMill project, to be used in other
+  commands.
+  """
+  require('map', provided_by=[map])
+
+  # Read JSON from file
+  with open('%(map)s/project.mml' % env, 'r') as f:
+    mml = json.load(f)
+    env.map_title = mml['name']
   
 
 def create_exports():

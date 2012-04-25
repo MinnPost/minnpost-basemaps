@@ -19,10 +19,18 @@ S3 buckets.
 fab map:"<MAP-NAME>" export_deploy:32
 ```
 
-And optionally with min and max zoom levels:
+Optionally with min and max zoom levels:
 
 ```
 fab map:"<MAP-NAME>" export_deploy:32,7,8
+```
+
+Or for labels or without labels.  These will create different folders on s3
+for the respective type.  ```<MAP-NAME>-label``` or ```<MAP-NAME>-no-label```
+
+```
+fab map:"<MAP-NAME>" no_labels export_deploy:32,7,8;
+fab map:"<MAP-NAME>" only_labels export_deploy:32,7,8
 ```
 
 ## Setup
