@@ -157,20 +157,52 @@ def no_labels():
   require('map', provided_by=[map])
   
   # Create a backup
-  local('cp %(map)s/project.mml %(map)s/project.mml.orig' % env);
+  exists = os.path.exists('%(map)s/project.mml.orig' % env)
+  if exists != True:
+    local('cp %(map)s/project.mml %(map)s/project.mml.orig' % env);
   
-  # Open file and remove the relevant lines (this is not very elegant)
+  # From the original, load the json, find any label style
+  # and remove.
   overwrite = open('%(map)s/project.mml' % env, 'w')
-  original = open('%(map)s/project.mml.orig' % env).read()
+  with open('%(map)s/project.mml.orig' % env, 'r') as f:
+    mml = json.load(f)
+    
+    # Process styles
+    styles = []
+    for index, item in enumerate(mml['Stylesheet']):
+      if item != 'labels.mss':
+        styles.append(item)
+    mml['Stylesheet'] = styles
+    
+    overwrite.write(json.dumps(mml, sort_keys = True, indent = 2))
+    overwrite.close()
   
-  original = re.sub('"labels.mss",', '', original)
-  original = re.sub('"labels.mss"', '', original)
+
+def only_labels():
+  """
+  Updates tilemill project to use only labels
+  """
+  require('map', provided_by=[map])
   
-  print original
+  # Create a backup
+  exists = os.path.exists('%(map)s/project.mml.orig' % env)
+  if exists != True:
+    local('cp %(map)s/project.mml %(map)s/project.mml.orig' % env);
   
-  #overwrite.write(re.sub('', '', original))
-  
-  overwrite.close()
+  # From the original, load the json, keep palette and labels
+  overwrite = open('%(map)s/project.mml' % env, 'w')
+  with open('%(map)s/project.mml.orig' % env, 'r') as f:
+    mml = json.load(f)
+    
+    # Process styles
+    styles = []
+    for index, item in enumerate(mml['Stylesheet']):
+      if item == 'labels.mss' or item == 'palette.mss':
+        styles.append(item)
+    mml['Stylesheet'] = styles
+    
+    overwrite.write(json.dumps(mml, sort_keys = True, indent = 2))
+    overwrite.close()
   
 
 def reset_labels():
