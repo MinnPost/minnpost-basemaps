@@ -56,7 +56,7 @@
 		  // Set default and load default layer
 		  $('input.update-map').val('minnpost-basemaps/minnpost-minnesota-night');
 	    var base = $('input.update-map').val();
-	    var url = 'https://s3.amazonaws.com/{s}.tiles.minnpost/' + base + '/{z}/{x}/{y}.png';
+	    var url = 'http://{s}.tiles.minnpost.s3.amazonaws.com/' + base + '/{z}/{x}/{y}.png';
 	    
   		layer = new L.TileLayer(url, { maxZoom: 15, minZoom: 2, scheme: 'tms' });
   		map.setView(new L.LatLng(46.1494,-94.4495), 7).addLayer(layer);
@@ -68,7 +68,7 @@
 		      map.removeLayer(layer);
 		    }
 		    var base = $('input.update-map').val();
-		    var url = 'https://s3.amazonaws.com/{s}.tiles.minnpost/' + base + '/{z}/{x}/{y}.png';
+		    var url = 'http://{s}.tiles.minnpost.s3.amazonaws.com/' + base + '/{z}/{x}/{y}.png';
 		    
     		layer = new L.TileLayer(url, { maxZoom: 15, minZoom: 2, scheme: 'tms' });
     		map.setView(new L.LatLng(46.1494,-94.4495), 7).addLayer(layer);
