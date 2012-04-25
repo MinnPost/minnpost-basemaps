@@ -39,6 +39,7 @@ def production():
   """
   env.settings = 'production'
   env.s3_buckets = ['a.tiles.minnpost', 'b.tiles.minnpost', 'c.tiles.minnpost', 'd.tiles.minnpost']
+  env.s3_template = 'http://{s}.tiles.minnpost.s3.amazonaws.com'
   env.acl = 'acl-public'
 
 
@@ -48,6 +49,7 @@ def staging():
   """
   env.settings = 'staging'
   env.s3_buckets = ['testing.tiles.minnpost']
+  env.s3_template = 'http://testing.tiles.minnpost.s3.amazonaws.com'
   env.acl = 'acl-public'
   
 
@@ -65,14 +67,7 @@ def deploy_to_s3(concurrency):
   require('settings', provided_by=[production, staging])
   require('map', provided_by=[map])
   env.concurrency = concurrency
-
-  # Determine if we need to add a label suffix
-  if env.labels == None:
-    env.map_suffix = ''
-  if env.labels == True:
-    env.map_suffix = '-labels'
-  if env.labels == False:
-    env.map_suffix = '-no-labels'
+  _create_map_suffix()
 
   # Deploy to many buckets (multi-dns-head mode)
   for bucket in env.s3_buckets:
@@ -91,6 +86,7 @@ def export_deploy(concurrency=32, minzoom=None, maxzoom=None):
   cleanup_exports()
   generate_mbtile(minzoom, maxzoom)
   generate_tiles_from_mbtile()
+  generate_tilejson()
   deploy_to_s3(concurrency)
   reset_labels()
   
@@ -153,9 +149,59 @@ def generate_tiles_from_mbtile():
       local('mb-util --scheme=tms %(map)s/exports/%(map)s.mbtiles %(map)s/tiles-tmp' % env)
       local('mv "%(map)s/tiles-tmp/%(map_version)s/%(map_title)s" %(map)s/tiles' % env)
       local('mv %(map)s/tiles-tmp/metadata.json %(map)s/tiles/metadata.json' % env)
-      local('rm -rf %(map)s/tiles-tmp' % env)
   else:
     print 'No MBTile file found in exports.'
+
+
+def generate_tilejson():
+  """
+  Generate valid tilejson file.
+  """
+  require('settings', provided_by=[production, staging])
+  require('map', provided_by=[map])
+  _create_map_suffix()
+  
+  # Utilize project data
+  with open('%(map)s/project.mml' % env, 'r') as f:
+    config = json.load(f)
+    tilejson = {}
+    
+    # Base values
+    tilejson['scheme'] = 'tms'
+    tilejson['tilejson'] = '2.0.0'
+    
+    # Attempt to get values from config
+    try:
+      tilejson['name'] = config['name'] if config.has_key('name') else ''
+      tilejson['description'] = config['description'] if config.has_key('description') else ''
+      tilejson['version'] = config['version'] if config.has_key('version') else '1.0.0'
+      tilejson['attribution'] = config['attribution'] if config.has_key('attribution') else ''
+      tilejson['legend'] = config['legend'] if config.has_key('legend') else ''
+      tilejson['template'] = config['template'] if config.has_key('template') else ''
+      tilejson['minzoom'] = config['minzoom'] if config.has_key('minzoom') else 0
+      tilejson['maxzoom'] = config['maxzoom'] if config.has_key('maxzoom') else 22
+      tilejson['bounds'] = config['bounds'] if config.has_key('bounds') else [-180, -90, 180, 90]
+      tilejson['center'] = config['center'] if config.has_key('center') else null
+    except KeyError:
+      print 'Key error'
+    
+    # Figure out template
+    tilejson['grids'] = []
+    tilejson['tiles'] = []
+    for bucket in env.s3_buckets:
+      env.s3_bucket = bucket 
+      tilejson['grids'].append('http://%(s3_bucket)s.s3.amazonaws.com/%(project_name)s/%(map)s%(map_suffix)s/{z}/{x}/{y}.grid.json' % env)
+      tilejson['tiles'].append('http://%(s3_bucket)s.s3.amazonaws.com/%(project_name)s/%(map)s%(map_suffix)s/{z}/{x}/{y}.png' % env)
+        
+    print tilejson
+    
+    # Write regular and jsonp tilejson files
+    tilejson_file = open('%(map)s/tiles/tilejson.json' % env, 'w')
+    tilejson_file.write(json.dumps(tilejson, sort_keys = True, indent = 2))
+    tilejson_file.close()
+    tilejsonp_file = open('%(map)s/tiles/tilejson.jsonp' % env, 'w')
+    tilejsonp_file.write('grid(%s)' % json.dumps(tilejson, sort_keys = True, indent = 2))
+    tilejsonp_file.close()
 
 
 def generate_tiles_mapnik(process_count, minzoom=None, maxzoom=None):
@@ -258,6 +304,18 @@ def reset_labels():
     print 'No label processing to reset.'
   
 
+def _create_map_suffix():
+  """
+  Creates map suffix for deploying
+  """
+  if env.labels == None:
+    env.map_suffix = ''
+  if env.labels == True:
+    env.map_suffix = '-labels'
+  if env.labels == False:
+    env.map_suffix = '-no-labels'
+
+
 def read_project():
   """
   Get data from the TileMill project, to be used in other
@@ -290,6 +348,7 @@ def cleanup_exports():
   Cleanup export directories
   """
   require('map', provided_by=[map])
+  local('rm -rf %(map)s/tiles-tmp' % env)
   local('rm -rf %(map)s/tiles/*' % env)
   local('rm -rf %(map)s/exports/*' % env)
 
