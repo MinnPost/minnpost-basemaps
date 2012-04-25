@@ -6,6 +6,7 @@ import sys
 import os
 import warnings
 import json
+import re
 from fabric.api import *
 
 """
@@ -147,6 +148,45 @@ def render_tiles_mapnik(process_count, minzoom=None, maxzoom=None):
     if 'buffer' in env:
       command += ' -b %(buffer)s'
     local(command % env)
+  
+
+def no_labels():
+  """
+  Updates tilemill project to no use labels
+  """
+  require('map', provided_by=[map])
+  
+  # Create a backup
+  local('cp %(map)s/project.mml %(map)s/project.mml.orig' % env);
+  
+  # Open file and remove the relevant lines (this is not very elegant)
+  overwrite = open('%(map)s/project.mml' % env, 'w')
+  original = open('%(map)s/project.mml.orig' % env).read()
+  
+  original = re.sub('"labels.mss",', '', original)
+  original = re.sub('"labels.mss"', '', original)
+  
+  print original
+  
+  #overwrite.write(re.sub('', '', original))
+  
+  overwrite.close()
+  
+
+def reset_labels():
+  """
+  Resets any label changes process
+  """
+  require('map', provided_by=[map])
+  
+  # Create a backup
+  
+  exists = os.path.exists('%(map)s/project.mml.orig' % env)
+  if exists:
+    local('rm -f %(map)s/project.mml' % env);
+    local('mv %(map)s/project.mml.orig %(map)s/project.mml' % env);
+  else:
+    print 'No label processing to reset.'
   
 
 def create_exports():
