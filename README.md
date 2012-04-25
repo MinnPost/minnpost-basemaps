@@ -25,7 +25,6 @@ And optionally with min and max zoom levels:
 fab map:"<MAP-NAME>" export_deploy:32,7,8
 ```
 
-
 ## Setup
 
 The following instructions are known to work on Mac OSX Lion and Snow Leopard.
@@ -34,12 +33,10 @@ The following instructions are known to work on Mac OSX Lion and Snow Leopard.
 
 Install dependencies.
 
-```
-sudo pip install -r requirements.txt;
-brew install mapnik;
-```
-
-Note the path prefix suggestion at the end of the mapnik install.
+1. [Install homebrew](https://github.com/mxcl/homebrew/wiki/installation)
+2. ```brew install s3cmd; s3cmd --configure```, you will then be asked for the AWS key and secret key.
+3. ```brew install mapnik;```  Note the path prefix suggestion at the end of the mapnik install.  You should add this to your ```.bash_profile```
+4. ```sudo pip install -r requirements.txt;```
 
 ### OpenStreetMap data
 
@@ -56,8 +53,7 @@ This will take some time, so download the [OSM file from Cloudmade](http://downl
 
 Use [osm2pgsql](https://wiki.openstreetmap.org/wiki/Osm2pgsql#Mac_OS_X) to import the data.
 
-1.  [Install homebrew](https://github.com/mxcl/homebrew/wiki/installation)
-2.  Install dependencies (this will take some time, especially osm2pgsql; be patient): ```brew install automake; brew install libtool; brew install geos; brew install proj; brew install gdal;```
+2.  Install dependencies (this will take some time, especially osm2pgsql; be patient): ```brew install automake; brew install libtool; brew install geos; brew install proj; brew install gdal --with-postgis;```
 3.  Install osm2pgsql: ```brew install --HEAD osm2pgsql;```
 4.  To import, run the following (this will take a while): ```osm2pgsql -K -c -G -U postgres -H localhost -d minnpost_base_map ~/Downloads/minnesota.osm.bz2```
 

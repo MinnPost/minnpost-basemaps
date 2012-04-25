@@ -61,6 +61,8 @@ def deploy_to_s3(concurrency):
   """
   Deploy tiles to S3.
   """
+  require('settings', provided_by=[production, staging])
+  require('map', provided_by=[map])
   env.concurrency = concurrency
 
   # Deploy to many buckets (multi-dns-head mode)
@@ -294,6 +296,7 @@ def clone(name):
   """
   Clone a map to work on.
   """
+  require('map', provided_by=[map])
   env.clone = name
   
   exists = os.path.exists('%(clone)s' % env)
@@ -305,3 +308,16 @@ def clone(name):
     # Now link it
     env.map = env.clone
     link()
+
+
+def remove_from_s3():
+  """
+  Remove map from S3
+  """
+  require('settings', provided_by=[production, staging])
+  require('map', provided_by=[map])
+  
+  with settings(warn_only=True):
+    for bucket in env.s3_buckets:
+      env.s3_bucket = bucket 
+      local('s3cmd del --recursive s3://%(s3_bucket)s/%(project_name)s/%(map)s' % env)
