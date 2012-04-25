@@ -69,14 +69,19 @@ def _deploy_to_s3(concurrency):
     local('ivs3 %(map)s/tiles %(s3_bucket)s/%(project_name)s/%(map)s --%(acl)s -c %(concurrency)s' % env)
 
 
-def deploy(concurrency=32):
+def deploy(concurrency=32, minzoom=None, maxzoom=None):
   """
   Deploy a map. Optionally takes a concurrency parameter indicating how many files to upload simultaneously.
   """
   require('settings', provided_by=[production, staging])
   require('map', provided_by=[map])
   
-  _deploy_to_s3(concurrency)
+  cleanup_exports()
+  no_labels()
+  generate_mbtile(minzoom, maxzoom)
+  reset_labels()
+  
+  #_deploy_to_s3(concurrency)
   
 
 def link_caches():
@@ -120,6 +125,24 @@ def generate_mbtile(minzoom=None, maxzoom=None):
     
     # Export
     local('%(tilemill_path)s/node %(tilemill_path)s/index.js export --format=mbtiles --minzoom=%(minzoom)s --maxzoom=%(maxzoom)s --bbox=%(bbox)s %(map)s %(map)s/exports/%(map)s.mbtiles' % env)
+
+
+def generate_tiles_from_mbtile():
+  """
+  Generate MBtile.
+  """
+  require('map', provided_by=[map])
+    
+  exists = os.path.exists('%(map)s/exports/%(map)s.mbtiles' % env)
+  if exists:
+    with settings(warn_only=True):
+      local('rm -rf %(map)s/tiles-tmp' % env)
+      local('mb-util --scheme=osm %(map)s/exports/%(map)s.mbtiles %(map)s/tiles-tmp' % env)
+      local('mv %(map)s/tiles-tmp/0.0.1 %(map)s/tiles' % env)
+      local('mv %(map)s/tiles-tmp/metadata.json %(map)s/tiles/metadata.json' % env)
+      local('rm -rf %(map)s/tiles-tmp' % env)
+  else:
+    print 'No MBTile file found in exports.'
 
 
 def render_tiles_mapnik(process_count, minzoom=None, maxzoom=None):

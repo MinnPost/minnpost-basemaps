@@ -3,6 +3,7 @@
 */layers/*
 
 # No rendered tiles or exports
-*/tiles/*
-*/exports/*
+*/tiles
+*/tiles-tmp
+*/exports
 */cache
