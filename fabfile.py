@@ -65,7 +65,7 @@ def deploy_to_s3(concurrency):
   require('settings', provided_by=[production, staging])
   require('map', provided_by=[map])
   env.concurrency = concurrency
-  
+
   # Determine if we need to add a label suffix
   if env.labels == None:
     env.map_suffix = ''
@@ -90,9 +90,9 @@ def export_deploy(concurrency=32, minzoom=None, maxzoom=None):
   create_exports()
   cleanup_exports()
   generate_mbtile(minzoom, maxzoom)
-  reset_labels()
   generate_tiles_from_mbtile()
   deploy_to_s3(concurrency)
+  reset_labels()
   
 
 def link_caches():
@@ -250,7 +250,6 @@ def reset_labels():
   require('map', provided_by=[map])
   
   # Check for orig
-  env.labels = None
   exists = os.path.exists('%(map)s/project.mml.orig' % env)
   if exists:
     local('rm -f %(map)s/project.mml' % env);
