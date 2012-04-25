@@ -87,6 +87,7 @@ def export_deploy(concurrency=32, minzoom=None, maxzoom=None):
   require('settings', provided_by=[production, staging])
   require('map', provided_by=[map])
   
+  create_exports()
   cleanup_exports()
   generate_mbtile(minzoom, maxzoom)
   reset_labels()
