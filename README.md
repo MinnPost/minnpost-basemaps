@@ -11,6 +11,19 @@ Map names are assumed to be the name of the relevant directory.
  
 ## Deployment
 
+To depoly a map, use the following.  It will export the map as an mbtiles file,
+extract out tiles and json tiles, then deploy them to the various
+S3 buckets.
+
+```
+fab map:"<MAP-NAME>" export_deploy:32
+```
+
+And optionally with min and max zoom levels:
+
+```
+fab map:"<MAP-NAME>" export_deploy:32,7,8
+```
 
 
 ## Setup
