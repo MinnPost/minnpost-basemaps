@@ -33,6 +33,9 @@ Map { font-directory: url(./fonts); }
 /* Note this is only implemented for certain things so far */
 @text_adjust: 2;
 
+/* Desaturate amount */
+@da: 100%;
+
 /* ================================================================== */
 /* LANDUSE & LANDCOVER COLORS
 /* ================================================================== */
@@ -40,29 +43,29 @@ Map { font-directory: url(./fonts); }
 @map-base:          transparent;
 @non-mn-land:       transparent;
 
-@land:              #FBFBFB;
-@mn-outline:        #444444;
+@land:              desaturate(#FBFBFB, @da);
+@mn-outline:        desaturate(#444444, @da);
 
-@water:             #ADD7F5;
+@water:             desaturate(#ADD7F5, @da);
 
-@grass:             #95E425;
-@park:              #ABEA53;
-@wooded:            #A6E949;
+@grass:             desaturate(#95E425, @da);
+@park:              desaturate(#ABEA53, @da);
+@wooded:            desaturate(#A6E949, @da);
 
-@agriculture:       #EFAE80;
-@beach:             #F4EEA9;
+@agriculture:       desaturate(#EFAE80, @da);
+@beach:             desaturate(#F4EEA9, @da);
 
-@cemetery:          #D6DED2;
-@building:          #E4E0E0;
+@cemetery:          desaturate(#D6DED2, @da);
+@building:          desaturate(#E4E0E0, @da);
 
-@hospital:          #F5ADB3;
-@school:            #F5CBAD;
-@sports:            #F5EFAD;
+@hospital:          desaturate(#F5ADB3, @da);
+@school:            desaturate(#F5CBAD, @da);
+@sports:            desaturate(#F5EFAD, @da);
 
-@residential:       @land * 0.98;
-@commercial:        @land * 0.97;
-@industrial:        @land * 0.96;
-@parking:           #EEE;
+@residential:       desaturate(@land * 0.98, @da);
+@commercial:        desaturate(@land * 0.97, @da);
+@industrial:        desaturate(@land * 0.96, @da);
+@parking:           desaturate(#EEE, @da);
 
 /* ================================================================== */
 /* ROAD COLORS
@@ -77,45 +80,45 @@ Map { font-directory: url(./fonts); }
  *         inner fill (inline).
  */
 
-@motorway_line:     #68330D; // 801019
+@motorway_line:     desaturate(lighten(#68330D, 50%), @da);
 @motorway_fill:     lighten(@motorway_line,10%);
 @motorway_case:     @motorway_line * 0.9;
 
-@trunk_line:        #7F3E10;
+@trunk_line:        desaturate(lighten(#7F3E10, 50%), @da);
 @trunk_fill:        lighten(@trunk_line,10%);
 @trunk_case:        @trunk_line * 0.9;
 
-@primary_line:      #E47525;
+@primary_line:      desaturate(lighten(#E47525, 20%), @da);
 @primary_fill:      lighten(@primary_line,10%);
 @primary_case:      @primary_line * 0.9;
 
-@secondary_line:    #EB975C;
+@secondary_line:    desaturate(lighten(#EB975C, 20%), @da);
 @secondary_fill:    lighten(@secondary_line,10%);
 @secondary_case:    @secondary_line * 0.9;
 
 @standard_line:     @land * 0.85;
-@standard_fill:     #fff;
+@standard_fill:     desaturate(#fff, @da);
 @standard_case:     @land * 0.9;
 
 @pedestrian_line:   @standard_line;
-@pedestrian_fill:   #FAFAF5;
+@pedestrian_fill:   desaturate(#FAFAF5, @da);
 @pedestrian_case:   @land;
 
 @cycle_line:        @standard_line;
-@cycle_fill:        #FAFAF5;
+@cycle_fill:        desaturate(#FAFAF5, @da);
 @cycle_case:        @land;
 
-@rail_line:         #999;
-@rail_fill:         #fff;
+@rail_line:         desaturate(#999, @da);
+@rail_fill:         desaturate(#fff, @da);
 @rail_case:         @land;
 
-@aeroway:           #ddd;
+@aeroway:           desaturate(#ddd, @da);
 
 /* ================================================================== */
 /* BOUNDARY COLORS
 /* ================================================================== */
 
-@admin_2:           #10197F;
+@admin_2:           desaturate(#10197F, @da);
 
 /* ================================================================== */
 /* LABEL COLORS
@@ -125,10 +128,10 @@ Map { font-directory: url(./fonts); }
    at once or override each individually. */
 @place_halo:        fadeout(#fff,34%);
 
-@country_text:      #10197F;
+@country_text:      desaturate(#10197F, @da);
 @country_halo:      @place_halo;
 
-@state_text:        #0A3452;
+@state_text:        desaturate(#0A3452, @da);
 @state_halo:        @place_halo;
 
 @city_text:         #444;
