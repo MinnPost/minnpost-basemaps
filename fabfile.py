@@ -79,8 +79,8 @@ def bbox(b1=None, b2=None, b3=None, b4=None):
   Change bounding box.
   """
   if b1 != None and b2 != None and b3 != None and b4 != None:
-    env.bounds = [b1, b2, b3, b4]
-    env.bbox = '%f,%f,%f,%f' % (b1, b2, b3, b4)
+    env.bounds = [float(b1), float(b2), float(b3), float(b4)]
+    env.bbox = '%s,%s,%s,%s' % (b1, b2, b3, b4)
   
 
 def deploy_to_s3(concurrency):
