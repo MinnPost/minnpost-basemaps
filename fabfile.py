@@ -28,11 +28,13 @@ if os.path.exists('/usr/share/tilemill'):
   env.tilemill_path = '/usr/share/tilemill'
   env.tilemill_projects = '/usr/share/mapbox/project'
   env.node_path = '/usr/bin/node'
+  env.os = 'Ubuntu'
 # OSX
 else:
   env.tilemill_path = '/Applications/TileMill.app/Contents/Resources'
   env.tilemill_projects = '~/Documents/MapBox/project'
   env.node_path = '%(tilemill_path)s/node' % env
+  env.os = 'OSX'
   
 """
 Environments
@@ -154,6 +156,10 @@ def generate_mbtile(minzoom=None, maxzoom=None):
     # If env bbox has not been set, then use config
     if env.bbox == None:
       env.bbox = '%f,%f,%f,%f' % (config['bounds'][0], config['bounds'][1], config['bounds'][2], config['bounds'][3])
+    
+    # Workaround for ICU
+    if env.os == 'OSX':
+      local('export ICU_DATA=%(tilemill_path)s/data/icu/' % env)
     
     # Export
     local('%(tilemill_path)s/node %(tilemill_path)s/index.js export --format=mbtiles --minzoom=%(minzoom)s --maxzoom=%(maxzoom)s --bbox=%(bbox)s %(map)s %(map)s/exports/%(map)s.mbtiles' % env)
