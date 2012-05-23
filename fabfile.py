@@ -18,7 +18,7 @@ env.pg_dbname = 'minnpost_fec'
 env.pg_user = 'postgres'
 env.pg_pass = ''
 env.labels = None
-env.tile_scheme = 'tms'
+env.tile_scheme = 'xyz'
 env.tile_template = '{z}/{x}/{y}'
 
 # Tilemill paths.  For Ubuntu
@@ -63,7 +63,7 @@ def map(name):
   env.map = name
   
 
-def tile_scheme(scheme='tms'):
+def tile_scheme(scheme='xyz'):
   """
   Change tilescheme.
   """
@@ -166,7 +166,8 @@ def generate_tiles_from_mbtile():
 
 def generate_tilejson():
   """
-  Generate valid tilejson file.
+  Generate valid tilejson file.  This should be able to be accomplished
+  with the api, such as http://localhost:20009/api/Project/:id
   """
   require('settings', provided_by=[production, staging])
   require('map', provided_by=[map])
