@@ -272,8 +272,8 @@
 #area_label[type='golf_course'][zoom>=10],
 #area_label[type='park'][zoom>=10] {
   text-name: "''";
-  text-fill: @park * 0.6;
-  text-halo-fill: fadeout(@park,25%);
+  text-fill: lighten(@park, 30%) * 0.6;
+  text-halo-fill: fadeout(lighten(@park, 30%), 25%);
   text-halo-radius: 2;
   text-face-name:@sans;
   text-wrap-width:30;
