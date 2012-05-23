@@ -42,7 +42,7 @@ def production():
   env.settings = 'production'
   #env.s3_buckets = ['a.tiles.minnpost', 'b.tiles.minnpost', 'c.tiles.minnpost', 'd.tiles.minnpost']
   env.s3_buckets = ['a.tiles.minnpost']
-  env.s3_template = 'http://{s}.tiles.minnpost.s3.amazonaws.com'
+  env.s3_template = 'http://{s}.tiles.minnpost.com'
   env.acl = 'acl-public'
 
 
@@ -118,7 +118,8 @@ def link_caches():
 
 def carto_to_mapnik():
   """
-  Convert carto styles to mapnik configuration.
+  Convert carto styles to mapnik configuration.  This should be able to
+  be done with the Tilemill export API.
   """
   require('map', provided_by=[map])
   link_caches()
