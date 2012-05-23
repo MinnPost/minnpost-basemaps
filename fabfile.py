@@ -20,6 +20,8 @@ env.pg_pass = ''
 env.labels = None
 env.tile_scheme = 'xyz'
 env.tile_template = '{z}/{x}/{y}'
+env.bounds = None
+env.bbox = None
 
 # Tilemill paths.  For Ubuntu
 if os.path.exists('/usr/share/tilemill'):
@@ -68,6 +70,15 @@ def tile_scheme(scheme='xyz'):
   Change tilescheme.
   """
   env.tile_scheme = scheme
+  
+
+def bbox(b1=None, b2=None, b3=None, b4=None):
+  """
+  Change bounding box.
+  """
+  if b1 != None and b2 != None and b3 != None and b4 != None:
+    env.bounds = [b1, b2, b3, b4]
+    env.bbox = '%f,%f,%f,%f' % (b1, b2, b3, b4)
   
 
 def deploy_to_s3(concurrency):
@@ -139,7 +150,10 @@ def generate_mbtile(minzoom=None, maxzoom=None):
     # Define config values
     env.minzoom = config['minzoom'] if minzoom == None else minzoom
     env.maxzoom = config['maxzoom'] if maxzoom == None else maxzoom
-    env.bbox = '%f,%f,%f,%f' % (config['bounds'][0], config['bounds'][1], config['bounds'][2], config['bounds'][3])
+    
+    # If env bbox has not been set, then use config
+    if env.bbox == None:
+      env.bbox = '%f,%f,%f,%f' % (config['bounds'][0], config['bounds'][1], config['bounds'][2], config['bounds'][3])
     
     # Export
     local('%(tilemill_path)s/node %(tilemill_path)s/index.js export --format=mbtiles --minzoom=%(minzoom)s --maxzoom=%(maxzoom)s --bbox=%(bbox)s %(map)s %(map)s/exports/%(map)s.mbtiles' % env)
