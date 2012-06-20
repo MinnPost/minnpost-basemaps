@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 """
 Fab file to help with managing project.  For docs on Fab file, please see: http://docs.fabfile.org/
+
+For exporting tiles to s3 and processing data
 """
 import sys
 import os
 import warnings
 import json
 import re
+import urllib2
+import json
+
 from fabric.api import *
 
 """
@@ -46,8 +51,13 @@ def production():
   env.settings = 'production'
   #env.s3_buckets = ['a.tiles.minnpost', 'b.tiles.minnpost', 'c.tiles.minnpost', 'd.tiles.minnpost']
   env.s3_buckets = ['a.tiles.minnpost']
-  env.s3_template = 'http://{s}.tiles.minnpost.com'
   env.acl = 'acl-public'
+  env.base_tiles_grids = [
+    'http://a.tiles.minnpost.com',
+    'http://b.tiles.minnpost.com',
+    'http://c.tiles.minnpost.com',
+    'http://d.tiles.minnpost.com'
+  ]
 
 
 def staging():
@@ -56,8 +66,18 @@ def staging():
   """
   env.settings = 'staging'
   env.s3_buckets = ['testing.tiles.minnpost']
-  env.s3_template = 'http://testing.tiles.minnpost.s3.amazonaws.com'
   env.acl = 'acl-public'
+  env.base_tiles_grids = [
+    'http://testing.tiles.minnpost.s3.amazonaws.com'
+  ]
+  
+
+def node(node_path, tilemill_path):
+  """
+  Set path to node and tilemill
+  """
+  env.tilemill_path = tilemill_path
+  env.node_path = node_path
   
 
 def map(name):
@@ -112,31 +132,36 @@ def export_deploy(concurrency=32, minzoom=None, maxzoom=None):
   generate_tilejson()
   deploy_to_s3(concurrency)
   reset_labels()
-  
 
-def link_caches():
+
+def deploy_tiles(concurrency=32, minzoom=None, maxzoom=None):
   """
-  Link local map cache to Mapbox cache to speed up mapnik conversion.
+  Deploy just tiles (do not generate mbtiles again). 
+  Optionally takes a concurrency parameter indicating how many files to upload simultaneously.
   """
+  require('settings', provided_by=[production, staging])
   require('map', provided_by=[map])
   
-  env.base_path = os.getcwd()
-  exists = os.path.exists('%(base_path)s/%(map)s/cache' % env)
-  if exists:
-    print "There already a linked cache directory."
-  else:
-    env.tilemill_cache = os.path.expanduser('%(tilemill_projects)s/../cache/' % env)
-    local(('ln -s %(tilemill_cache)s %(base_path)s/%(map)s/cache') % env)
+  create_exports()
+  cleanup_exports(False)
+  generate_tiles_from_mbtile()
+  generate_tilejson()
+  deploy_to_s3(concurrency)
+  reset_labels()
   
-
-def carto_to_mapnik():
+  
+def deploy_tilejson(concurrency=32, minzoom=None, maxzoom=None):
   """
-  Convert carto styles to mapnik configuration.  This should be able to
-  be done with the Tilemill export API.
+  Deploy just the tilejson export. Optionally takes a concurrency parameter indicating how many files to upload simultaneously.
   """
+  require('settings', provided_by=[production, staging])
   require('map', provided_by=[map])
-  link_caches()
-  local('%(tilemill_path)s/node_modules/carto/bin/carto %(map)s/project.mml > %(map)s/%(map)s.xml' % env)
+  
+  create_exports()
+  cleanup_exports()
+  generate_tilejson()
+  deploy_to_s3(concurrency)
+  reset_labels()
   
 
 def generate_mbtile(minzoom=None, maxzoom=None):
@@ -162,7 +187,7 @@ def generate_mbtile(minzoom=None, maxzoom=None):
       local('export ICU_DATA=%(tilemill_path)s/data/icu/' % env)
     
     # Export
-    local('%(tilemill_path)s/node %(tilemill_path)s/index.js export --format=mbtiles --minzoom=%(minzoom)s --maxzoom=%(maxzoom)s --bbox=%(bbox)s %(map)s %(map)s/exports/%(map)s.mbtiles' % env)
+    local('%(node_path)s %(tilemill_path)s/index.js export --format=mbtiles --minzoom=%(minzoom)s --maxzoom=%(maxzoom)s --bbox=%(bbox)s %(map)s %(map)s/exports/%(map)s.mbtiles' % env)
 
 
 def generate_tiles_from_mbtile():
@@ -175,9 +200,14 @@ def generate_tiles_from_mbtile():
   exists = os.path.exists('%(map)s/exports/%(map)s.mbtiles' % env)
   if exists:
     with settings(warn_only=True):
+      # MB-Util uses 'osm' as the scheme name
+      env.mb_utl_scheme = env.tile_scheme
+      if env.tile_scheme == 'xyz':
+        env.mb_utl_scheme = 'osm'
+    
       local('rm -rf %(map)s/tiles-tmp' % env)
       local('rm -rf %(map)s/tiles' % env)
-      local('mb-util --scheme=%(tile_scheme)s %(map)s/exports/%(map)s.mbtiles %(map)s/tiles-tmp' % env)
+      local('mb-util --scheme=%(mb_utl_scheme)s %(map)s/exports/%(map)s.mbtiles %(map)s/tiles-tmp' % env)
       local('mv "%(map)s/tiles-tmp/%(map_version)s/%(map_title)s" %(map)s/tiles' % env)
       local('mv %(map)s/tiles-tmp/metadata.json %(map)s/tiles/metadata.json' % env)
   else:
@@ -194,51 +224,35 @@ def generate_tilejson():
   _create_map_suffix()
   
   # Utilize project data
-  with open('%(map)s/project.mml' % env, 'r') as f:
-    config = json.load(f)
-    tilejson = {}
+  response = urllib2.urlopen('http://localhost:20009/api/Project/%(map)s' % env)
+  config = json.load(response)
+  if config:
+    tilejson = config
     
-    # Base values
+    # Force scheme as tilemill always like xyz and maybe we dont
     tilejson['scheme'] = env.tile_scheme
-    tilejson['tilejson'] = '2.0.0'
-    tilejson['id'] = env.map
     
     # Attempt to get values from config
     try:
-      tilejson['name'] = config['name'] if config.has_key('name') else ''
-      tilejson['description'] = config['description'] if config.has_key('description') else ''
       tilejson['version'] = config['version'] if config.has_key('version') else '1.0.0'
-      tilejson['attribution'] = config['attribution'] if config.has_key('attribution') else ''
-      tilejson['legend'] = config['legend'] if config.has_key('legend') else ''
-      tilejson['minzoom'] = config['minzoom'] if config.has_key('minzoom') else 0
-      tilejson['maxzoom'] = config['maxzoom'] if config.has_key('maxzoom') else 22
       tilejson['bounds'] = config['bounds'] if config.has_key('bounds') else [-180, -90, 180, 90]
-      tilejson['center'] = config['center'] if config.has_key('center') else null
     except KeyError:
       print 'Key error'
     
-    # Template is in the metadata.json file
-    with open('%(map)s/tiles/metadata.json' % env, 'r') as j:
-      metadata = json.load(j)
-      try:
-        tilejson['template'] = metadata['template']
-      except KeyError:
-        tilejson['template'] = ''
-    
-    # Figure out template
+    # Figure out templates
     tilejson['grids'] = []
     tilejson['tiles'] = []
-    for bucket in env.s3_buckets:
-      env.s3_bucket = bucket 
-      tilejson['grids'].append('http://%(s3_bucket)s.s3.amazonaws.com/%(project_name)s/%(map)s%(map_suffix)s/%(tile_template)s.grid.json' % env)
-      tilejson['tiles'].append('http://%(s3_bucket)s.s3.amazonaws.com/%(project_name)s/%(map)s%(map_suffix)s/%(tile_template)s.png' % env)
+    for bucket in env.base_tiles_grids:
+      env.this_bucket = bucket 
+      tilejson['grids'].append('%(this_bucket)s/%(project_name)s/%(map)s%(map_suffix)s/%(tile_template)s.grid.json' % env)
+      tilejson['tiles'].append('%(this_bucket)s/%(project_name)s/%(map)s%(map_suffix)s/%(tile_template)s.png' % env)
     
     # Write regular and jsonp tilejson files
     tilejson_file = open('%(map)s/tiles/tilejson.json' % env, 'w')
     tilejson_file.write(json.dumps(tilejson, sort_keys = True, indent = 2))
     tilejson_file.close()
     tilejsonp_file = open('%(map)s/tiles/tilejson.jsonp' % env, 'w')
-    tilejsonp_file.write('grid(%s)' % json.dumps(tilejson, sort_keys = True, indent = 2))
+    tilejsonp_file.write('grid(%s);' % json.dumps(tilejson, sort_keys = True, indent = 2))
     tilejsonp_file.close()
 
 
@@ -381,14 +395,16 @@ def create_exports():
   local('mkdir -p %(map)s/exports' % env)
   
 
-def cleanup_exports():
+def cleanup_exports(mbtiles=True):
   """
   Cleanup export directories
   """
   require('map', provided_by=[map])
   local('rm -rf %(map)s/tiles-tmp' % env)
   local('rm -rf %(map)s/tiles/*' % env)
-  local('rm -rf %(map)s/exports/*' % env)
+  
+  if (mbtiles == True):
+    local('rm -rf %(map)s/exports/*' % env)
 
 
 def link():
